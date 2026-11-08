@@ -1,0 +1,9 @@
+{
+  "name": "ai-traveling-flight-scanner",
+  "version": "1.0.0",
+  "description": "台灣北中南出發 × 全球 102 大目的地機票自動比價系統",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

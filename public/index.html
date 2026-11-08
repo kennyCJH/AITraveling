@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>台灣北中南出發 × 全球 102 大目的地機票自動比價系統</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 頂部導覽列 -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-icon">✈️</div>
+        <div>
+          <h1>台灣多機場出發 × 全球機票自動比價系統</h1>
+          <p class="subtitle">一次同步掃描 <strong>台北桃園 (TPE)、台北松山 (TSA)、台中 (RMQ)、高雄 (KHH)</strong> 出發至全球 7 大區域 102 個目的地的最便宜機票</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="status-pill" id="engineStatusPill">⚡ 雙引擎比價就緒</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <!-- 步驟一：日期與台灣出發機場設定 -->
+    <section class="card config-section">
+      <div class="section-header">
+        <div class="step-title">
+          <span class="step-badge">STEP 1</span>
+          <h2>設定出發與回程日期・選擇台灣出發機場</h2>
+        </div>
+        <div class="quick-date-group">
+          <span class="quick-label">快速帶入日期：</span>
+          <button type="button" class="btn-chip" data-preset="nextMonth5d">下個月 5天4夜</button>
+          <button type="button" class="btn-chip" data-preset="weekend3d">小週末 4天3夜</button>
+          <button type="button" class="btn-chip" data-preset="long8d">長途 8天7夜</button>
+          <button type="button" class="btn-chip" data-preset="cny">寒假/春節檔期</button>
+        </div>
+      </div>
+
+      <div class="config-grid">
+        <!-- 日期與人數設定 -->
+        <div class="date-controls">
+          <div class="form-group">
+            <label for="departDate">🛫 出發日期</label>
+            <input type="date" id="departDate" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label for="returnDate">🛬 回程日期</label>
+            <input type="date" id="returnDate" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label for="adultsSelect">👤 乘客人數</label>
+            <select id="adultsSelect" class="form-input">
+              <option value="1" selected>1 位成人 (單人票價)</option>
+              <option value="2">2 位成人</option>
+              <option value="3">3 位成人</option>
+              <option value="4">4 位成人</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="cabinSelect">💺 艙等選擇</label>
+            <select id="cabinSelect" class="form-input">
+              <option value="1" selected>經濟艙 (Economy)</option>
+              <option value="2">豪華經濟艙 (Premium Economy)</option>
+              <option value="3">商務艙 (Business)</option>
+            </select>
+          </div>
+          <div class="trip-duration-banner" id="tripDurationBanner">
+            📅 行程天數：<strong id="tripDaysText">5 天 4 夜</strong>
+          </div>
+        </div>
+
+        <!-- 台灣出發機場選擇 -->
+        <div class="origin-controls">
+          <div class="origin-header">
+            <label>🇹🇼 台灣出發機場（可多選比價）</label>
+            <div class="origin-quick-btns">
+              <button type="button" class="btn-link" id="selectAllOriginsBtn">全選北中南</button>
+              <button type="button" class="btn-link" id="selectNorthOriginsBtn">僅選台北(桃/松)</button>
+              <button type="button" class="btn-link" id="selectCentralSouthBtn">僅選台中/高雄</button>
+            </div>
+          </div>
+          <div class="origin-cards-grid" id="originCardsContainer">
+            <!-- 由 app.js 動態渲染 TPE, TSA, RMQ, KHH -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 步驟二：目的地選擇器 (100% 還原 7 張上傳截圖) -->
+    <section class="card destination-section">
+      <div class="section-header">
+        <div class="step-title">
+          <span class="step-badge">STEP 2</span>
+          <h2>選擇目的地（共 7 大區域・102 個航點，支援跨區多選）</h2>
+        </div>
+        <div class="dest-toolbar">
+          <div class="search-box">
+            <input type="text" id="destSearchInput" placeholder="🔍 搜尋城市名稱或機場代碼 (如: 東京、沖繩、LAX)..." />
+          </div>
+          <button type="button" class="btn-secondary" id="selectRegionAllBtn">✅ 全選本頁籤區域</button>
+          <button type="button" class="btn-secondary" id="selectRmqKhhDirectBtn">⚡ 快選台中/高雄有直飛航點</button>
+          <button type="button" class="btn-secondary" id="clearDestinationsBtn">🗑️ 清空已選</button>
+        </div>
+      </div>
+
+      <!-- 還原截圖之 7 大區域頁籤列 -->
+      <div class="region-tabs-bar" id="regionTabsBar">
+        <!-- 日韓 | 東南亞 | 港澳大陸 | 美洲 | 歐洲 | 紐澳 | 其他 -->
+      </div>
+
+      <!-- 還原截圖之 5 欄式目的地網格 -->
+      <div class="destinations-grid-panel" id="destinationsGridPanel">
+        <!-- 由 app.js 動態渲染每列 5 個城市 -->
+      </div>
+
+      <!-- 已選目的地與開始搜尋列 -->
+      <div class="selected-action-bar">
+        <div class="selected-summary">
+          <span class="selected-count-badge" id="selectedCountBadge">已選擇 5 個目的地</span>
+          <div class="selected-chips-list" id="selectedChipsList"></div>
+        </div>
+        <div class="action-buttons">
+          <button type="button" class="btn-primary-search" id="startSearchBtn">
+            🚀 開始搜尋全台各機場出發最便宜機票
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 步驟三：比價結果儀表板 -->
+    <section class="results-wrapper" id="resultsSection">
+      <!-- 載入中動畫 -->
+      <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="spinner"></div>
+        <h3 id="loadingTitle">正在同步掃描台灣北中南機場出發航班與各大售票網最低價...</h3>
+        <p id="loadingSubtext">比對 Google Flights、Trip.com、易遊網、FunTime、Skyscanner 與 Kayak 報價中</p>
+      </div>
+
+      <!-- 全場最低價摘要指標卡 (KPI Cards) -->
+      <div class="kpi-summary-grid" id="kpiSummaryGrid"></div>
+
+      <!-- 結果控制列：檢視模式與直飛/轉機切換 -->
+      <div class="card results-toolbar-card">
+        <div class="results-toolbar">
+          <!-- 左側：主要視圖切換 -->
+          <div class="view-mode-tabs">
+            <button type="button" class="view-tab active" data-view="matrix">
+              📊 北中南出發最低價矩陣表 (台北 vs 台中 vs 高雄)
+            </button>
+            <button type="button" class="view-tab" data-view="ranking">
+              🏆 最便宜機票排行榜 & 各大售票網訂票
+            </button>
+          </div>
+
+          <!-- 右側：直飛 vs 轉機 顯示切換 -->
+          <div class="flight-type-filter">
+            <span class="filter-label">比價顯示模式：</span>
+            <div class="segmented-control" id="flightModeControl">
+              <button type="button" class="seg-btn active" data-mode="both">並排對比 (最低價 + 直飛)</button>
+              <button type="button" class="seg-btn" data-mode="direct">優先只看直飛</button>
+              <button type="button" class="seg-btn" data-mode="overall">只看絕對最低價 (含轉機)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 視圖 1：台灣北中南出發最低價矩陣表 -->
+      <div class="card matrix-view-container" id="matrixViewContainer">
+        <div class="matrix-header-note">
+          <div>
+            <h3>📊 台灣不同機場出發・最低票價對照矩陣表</h3>
+            <p>綠色皇冠 <span class="badge-crown">🏆 全台最低</span> 代表該目的地從台灣出發最便宜的機場；點擊任一價格格可展開 <strong>6 大售票網站即時比價與航班時刻表</strong>。</p>
+          </div>
+          <div class="legend-items">
+            <span class="legend-item"><span class="dot dot-direct"></span> 有直飛航班</span>
+            <span class="legend-item"><span class="dot dot-transfer"></span> 需轉機 1~2 次</span>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="matrix-table" id="matrixTable">
+            <thead>
+              <tr id="matrixTableHeadRow">
+                <!-- 動態產生欄位 -->
+              </tr>
+            </thead>
+            <tbody id="matrixTableBody">
+              <!-- 動態產生各目的地列 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 視圖 2：最便宜機票排行榜 -->
+      <div class="card ranking-view-container hidden" id="rankingViewContainer">
+        <div class="ranking-filter-bar">
+          <div class="origin-filter-pills" id="rankingOriginFilterPills">
+            <button type="button" class="pill-btn active" data-origin="ALL">全部台灣出發</button>
+            <button type="button" class="pill-btn" data-origin="TPE">台北桃園 (TPE)</button>
+            <button type="button" class="pill-btn" data-origin="TSA">台北松山 (TSA)</button>
+            <button type="button" class="pill-btn" data-origin="RMQ">台中 (RMQ)</button>
+            <button type="button" class="pill-btn" data-origin="KHH">高雄 (KHH)</button>
+          </div>
+          <div class="sort-control">
+            <label for="rankingSortSelect">排序方式：</label>
+            <select id="rankingSortSelect" class="form-input-sm">
+              <option value="price_asc">💰 最低總價（由低到高）</option>
+              <option value="direct_price_asc">✈️ 直飛最低價（由低到高）</option>
+              <option value="duration_asc">⏱️ 飛行時間（由短到長）</option>
+            </select>
+          </div>
+        </div>
+        <div class="ranking-cards-list" id="rankingCardsList">
+          <!-- 動態產生排行榜卡片 -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 單一航線：各大售票網站深度比價與航班明細 Modal -->
+  <div class="modal-backdrop hidden" id="detailModalBackdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <span class="modal-route-badge" id="modalRouteBadge">TPE ➔ NRT</span>
+          <h3 id="modalTitle">台北(桃園) 飛往 東京 — 各大機票網站比價與航班詳情</h3>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeModalBtn">✕</button>
+      </div>
+      <div class="modal-body" id="modalBodyContent">
+        <!-- 動態填入直飛 vs 轉機方案、6 大售票網站連結 -->
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
