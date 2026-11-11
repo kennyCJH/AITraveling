@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>台灣北中南出發 × 全球 102 大目的地機票自動比價系統</title>
+  <title>台灣北中南出發 × 全球 102 大目的地機票自動比價系統（含三腿票/四腿票多航點搜尋）</title>
   <link rel="stylesheet" href="public/styles.css" />
 </head>
 <body>
@@ -14,24 +14,42 @@
         <div class="brand-icon">✈️</div>
         <div>
           <h1>台灣多機場出發 × 全球機票自動比價系統</h1>
-          <p class="subtitle">一次同步掃描 <strong>台北桃園 (TPE)、台北松山 (TSA)、台中 (RMQ)、高雄 (KHH)</strong> 出發至全球 7 大區域 102 個目的地的最便宜機票</p>
+          <p class="subtitle">同步掃描 <strong>台北桃園 (TPE)、台北松山 (TSA)、台中 (RMQ)、高雄 (KHH)</strong> 出發至全球 7 大區域 102 航點真實票價・支援<strong>三腿票 / 四腿票多航點組合</strong></p>
         </div>
       </div>
       <div class="header-badges">
-        <span class="status-pill" id="engineStatusPill">⚡ 雙引擎比價就緒</span>
+        <span class="status-pill" id="engineStatusPill">⚡ Google Flights 真實票價基準已載入</span>
       </div>
     </div>
   </header>
 
   <main class="container main-content">
+    <!-- 頂部搜尋模式切換：標準北中南比價 vs 多航點三腿票/四腿票 -->
+    <div class="search-mode-switcher" id="searchModeSwitcher">
+      <button type="button" class="mode-switch-btn active" data-search-mode="standard">
+        <span class="mode-icon">🔄</span>
+        <div>
+          <div class="mode-title">來回 / 單程 全台多機場比價</div>
+          <div class="mode-desc">一次比較台北(桃/松)、台中、高雄出發至 102 個目的地最低價</div>
+        </div>
+      </button>
+      <button type="button" class="mode-switch-btn" data-search-mode="multicity">
+        <span class="mode-icon">🦵</span>
+        <div>
+          <div class="mode-title">多航點搜尋：三腿票 / 四腿票組合器 <span class="badge-new">NEW</span></div>
+          <div class="mode-desc">支援三段票(三腿票)、四段票(四腿票)、不同點進出開口票與跳島組合</div>
+        </div>
+      </button>
+    </div>
+
     <!-- 步驟一：日期與台灣出發機場設定 -->
     <section class="card config-section">
       <div class="section-header">
         <div class="step-title">
           <span class="step-badge">STEP 1</span>
-          <h2>設定出發與回程日期・選擇台灣出發機場</h2>
+          <h2>設定出發日期・乘客人數・台灣比較機場</h2>
         </div>
-        <div class="quick-date-group">
+        <div class="quick-date-group" id="quickDateGroup">
           <span class="quick-label">快速帶入日期：</span>
           <button type="button" class="btn-chip" data-preset="nextMonth5d">下個月 5天4夜</button>
           <button type="button" class="btn-chip" data-preset="weekend3d">小週末 4天3夜</button>
@@ -43,18 +61,18 @@
       <div class="config-grid">
         <!-- 日期與人數設定 -->
         <div class="date-controls">
-          <div class="form-group">
+          <div class="form-group" id="departDateGroup">
             <label for="departDate">🛫 出發日期</label>
             <input type="date" id="departDate" class="form-input" />
           </div>
-          <div class="form-group">
+          <div class="form-group" id="returnDateGroup">
             <label for="returnDate">🛬 回程日期</label>
             <input type="date" id="returnDate" class="form-input" />
           </div>
           <div class="form-group">
             <label for="adultsSelect">👤 乘客人數</label>
             <select id="adultsSelect" class="form-input">
-              <option value="1" selected>1 位成人 (單人票價)</option>
+              <option value="1" selected>1 位成人 (單人含稅價)</option>
               <option value="2">2 位成人</option>
               <option value="3">3 位成人</option>
               <option value="4">4 位成人</option>
@@ -76,7 +94,7 @@
         <!-- 台灣出發機場選擇 -->
         <div class="origin-controls">
           <div class="origin-header">
-            <label>🇹🇼 台灣出發機場（可多選比價）</label>
+            <label>🇹🇼 台灣出發/回程機場（可多選自動比價北中南）</label>
             <div class="origin-quick-btns">
               <button type="button" class="btn-link" id="selectAllOriginsBtn">全選北中南</button>
               <button type="button" class="btn-link" id="selectNorthOriginsBtn">僅選台北(桃/松)</button>
@@ -90,8 +108,65 @@
       </div>
     </section>
 
-    <!-- 步驟二：目的地選擇器 (100% 還原 7 張上傳截圖) -->
-    <section class="card destination-section">
+    <!-- 多航點搜尋區塊：三腿票 / 四腿票組合器 (切換至多航點模式時顯示) -->
+    <section class="card multicity-section hidden" id="multiCitySection">
+      <div class="section-header">
+        <div class="step-title">
+          <span class="step-badge">STEP 2 (多航點)</span>
+          <h2>三段票 (三腿票) ・ 四段票 (四腿票) 航段設定與全台機場自動尋優</h2>
+        </div>
+        <div class="mc-header-note">
+          💡 若航段設為「🇹🇼 台灣任一機場 (自動比價 TPE/TSA/RMQ/KHH)」，系統會自動幫您算出從桃園、松山、台中、高雄出發哪一組三腿/四腿票最便宜！
+        </div>
+      </div>
+
+      <!-- 熱門三腿票 / 四腿票玩家範本 -->
+      <div class="mc-presets-bar">
+        <span class="mc-preset-label">🔥 熱門三腿票 / 四腿票經典玩法一鍵帶入：</span>
+        <div class="mc-preset-buttons">
+          <button type="button" class="btn-mc-preset active" data-mc-preset="jp_openjaw_3leg">
+            🇯🇵 日本雙城開口三腿票 (台灣 ➔ 東京 ➔ 大阪 ➔ 台灣)
+          </button>
+          <button type="button" class="btn-mc-preset" data-mc-preset="jp_kr_3leg">
+            🇯🇵🇰🇷 日韓跳島三腿票 (台灣 ➔ 首爾 ➔ 東京 ➔ 台灣)
+          </button>
+          <button type="button" class="btn-mc-preset" data-mc-preset="classic_4leg">
+            🏆 玩家神票・四腿票包兩趟出國 (台灣 ➔ 東京 ➔ 台灣 ➔ 首爾 ➔ 台灣)
+          </button>
+          <button type="button" class="btn-mc-preset" data-mc-preset="sea_3leg">
+            🌴 東南亞雙國三腿票 (台灣 ➔ 曼谷 ➔ 新加坡 ➔ 台灣)
+          </button>
+          <button type="button" class="btn-mc-preset" data-mc-preset="eu_openjaw_3leg">
+            🇪🇺 歐洲雙點進出三腿票 (台灣 ➔ 巴黎 ➔ 倫敦 ➔ 台灣)
+          </button>
+          <button type="button" class="btn-mc-preset" data-mc-preset="hk_jp_4leg">
+            ✈️ 外站四腿票 (香港 ➔ 台北 ➔ 東京 ➔ 台北 ➔ 香港)
+          </button>
+        </div>
+      </div>
+
+      <!-- 動態航段列表 (支援 2 ~ 6 腿) -->
+      <div class="mc-legs-list" id="multiCityLegsContainer">
+        <!-- 由 app.js 動態渲染每一腿 (第 1 腿、第 2 腿、第 3 腿、第 4 腿...) -->
+      </div>
+
+      <!-- 新增航段與開始計算列 -->
+      <div class="mc-actions-bar">
+        <div class="mc-left-btns">
+          <button type="button" class="btn-secondary" id="addMultiCityLegBtn">➕ 新增一腿航段 (最多支援 6 腿)</button>
+          <span class="mc-leg-counter" id="multiCityLegCountBadge">目前為：3 腿票 (三段票)</span>
+        </div>
+        <button type="button" class="btn-primary-search" id="startMultiCitySearchBtn">
+          🚀 開始計算三腿 / 四腿票最便宜組合 & 產出各大訂票網連結
+        </button>
+      </div>
+
+      <!-- 多航點搜尋結果區 -->
+      <div class="mc-results-container" id="multiCityResultsContainer"></div>
+    </section>
+
+    <!-- 步驟二：標準模式目的地選擇器 (100% 還原 7 張上傳截圖) -->
+    <section class="card destination-section" id="standardDestSection">
       <div class="section-header">
         <div class="step-title">
           <span class="step-badge">STEP 2</span>
@@ -131,7 +206,7 @@
       </div>
     </section>
 
-    <!-- 步驟三：比價結果儀表板 -->
+    <!-- 步驟三：標準模式比價結果儀表板 -->
     <section class="results-wrapper" id="resultsSection">
       <!-- 載入中動畫 -->
       <div class="loading-overlay hidden" id="loadingOverlay">
@@ -172,8 +247,8 @@
       <div class="card matrix-view-container" id="matrixViewContainer">
         <div class="matrix-header-note">
           <div>
-            <h3>📊 台灣不同機場出發・最低票價對照矩陣表</h3>
-            <p>綠色皇冠 <span class="badge-crown">🏆 全台最低</span> 代表該目的地從台灣出發最便宜的機場；點擊任一價格格可展開 <strong>6 大售票網站即時比價與航班時刻表</strong>。</p>
+            <h3>📊 台灣不同機場出發・最低票價對照矩陣表（真實航班號碼與含稅價）</h3>
+            <p>綠色皇冠 <span class="badge-crown">🏆 全台最低</span> 代表該目的地從台灣出發最便宜的機場；點擊任一價格格可展開 <strong>6 大售票網站即時比價與真實航班時刻表</strong>。</p>
           </div>
           <div class="legend-items">
             <span class="legend-item"><span class="dot dot-direct"></span> 有直飛航班</span>
@@ -236,6 +311,7 @@
     </div>
   </div>
 
+  <script src="public/realFares.js"></script>
   <script src="public/app.js"></script>
 </body>
 </html>

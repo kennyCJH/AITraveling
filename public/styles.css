@@ -1235,3 +1235,322 @@ body {
     transform: rotate(360deg);
   }
 }
+
+/* =========================================================
+   新增：搜尋模式切換器 (標準比價 vs 多航點三腿票/四腿票)
+   ========================================================= */
+.search-mode-switcher {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 780px) {
+  .search-mode-switcher {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mode-switch-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+.mode-switch-btn:hover {
+  border-color: #64748b;
+  background: #f8fafc;
+}
+
+.mode-switch-btn.active {
+  border-color: #0284c7;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.15);
+}
+
+.mode-icon {
+  font-size: 28px;
+  line-height: 1;
+  background: #f1f5f9;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mode-switch-btn.active .mode-icon {
+  background: #0284c7;
+  color: #fff;
+}
+
+.mode-title {
+  font-size: 16.5px;
+  font-weight: 900;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mode-desc {
+  font-size: 12.5px;
+  color: #475569;
+  margin-top: 3px;
+}
+
+.badge-new {
+  background: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* 航班號碼標籤 */
+.flight-no-badge {
+  display: inline-block;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* =========================================================
+   多航點搜尋：三腿票 / 四腿票組合器樣式
+   ========================================================= */
+.multicity-section {
+  border: 2px solid #0284c7;
+}
+
+.mc-header-note {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  color: #0369a1;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.mc-presets-bar {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+
+.mc-preset-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.mc-preset-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn-mc-preset {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #334155;
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-mc-preset:hover {
+  border-color: #0284c7;
+  color: #0284c7;
+  background: #f0f9ff;
+}
+
+.btn-mc-preset.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+.mc-legs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.mc-leg-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 34px 1fr 185px 44px;
+  gap: 12px;
+  align-items: center;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+@media (max-width: 960px) {
+  .mc-leg-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.mc-leg-badge {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.mc-leg-arrow {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 900;
+  color: #0284c7;
+}
+
+.mc-remove-leg-btn {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mc-remove-leg-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mc-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.mc-left-btns {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mc-leg-counter {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #0369a1;
+  background: #e0f2fe;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.mc-results-container {
+  margin-top: 22px;
+}
+
+.mc-combo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.mc-combo-card {
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.mc-combo-card.best-combo {
+  border-color: #10b981;
+  background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 35%);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.14);
+}
+
+.mc-combo-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 12px;
+}
+
+.mc-combo-price {
+  font-size: 26px;
+  font-weight: 900;
+  color: #059669;
+  text-align: right;
+}
+
+.mc-legs-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mc-timeline-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 12.5px;
+}
+
+.mc-timeline-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 3px;
+}
+
+.mc-timeline-sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #475569;
+  font-size: 12px;
+}
+

@@ -11,7 +11,8 @@ const {
   TAIWAN_AIRPORTS,
   DESTINATION_REGIONS,
   searchSingleRoute,
-  searchMultiRoutes
+  searchMultiRoutes,
+  searchMultiCityLegs
 } = require("./services/flightEngine");
 
 const PORT = process.env.PORT || 3000;
@@ -150,6 +151,29 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 500, {
         ok: false,
         error: err.message || "深度比價失敗"
+      });
+    }
+  }
+
+  // 3b. 多航點 (三腿票 / 四腿票 / 開口票) 智慧組合搜尋 API
+  if (req.method === "POST" && pathname === "/api/multicity") {
+    try {
+      const body = await parseJsonBody(req);
+      const { legs = [], origins = ["TPE", "TSA", "RMQ", "KHH"], adults = 1, cabin = 1 } = body;
+      const result = await searchMultiCityLegs({
+        legs,
+        origins,
+        adults: Number(adults) || 1,
+        cabin: Number(cabin) || 1
+      });
+      return sendJson(res, 200, {
+        ok: true,
+        ...result
+      });
+    } catch (err) {
+      return sendJson(res, 400, {
+        ok: false,
+        error: err.message || "多航點搜尋失敗"
       });
     }
   }
